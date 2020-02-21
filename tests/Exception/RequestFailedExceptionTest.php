@@ -6,8 +6,6 @@ namespace Setono\Kraken\Exception;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class RequestFailedExceptionTest extends TestCase
 {
@@ -20,7 +18,7 @@ final class RequestFailedExceptionTest extends TestCase
         $request = $psr17Factory->createRequest('GET', 'https://example.com');
         $response = $psr17Factory->createResponse();
         $response = $response->withBody($psr17Factory->createStream(json_encode([
-            'error' => 'Error message'
+            'error' => 'Error message',
         ])));
 
         $exception = new RequestFailedException($request, $response);

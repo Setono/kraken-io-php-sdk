@@ -37,12 +37,12 @@ final class ClientTest extends TestCase
     private static function getClient(): Client
     {
         $apiKey = getenv('KRAKEN_API_KEY');
-        if(false === $apiKey) {
+        if (false === $apiKey) {
             $apiKey = 'api key';
         }
 
         $apiSecret = getenv('KRAKEN_API_SECRET');
-        if(false === $apiSecret) {
+        if (false === $apiSecret) {
             $apiSecret = 'api key';
         }
 
