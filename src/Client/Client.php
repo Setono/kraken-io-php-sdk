@@ -28,6 +28,12 @@ final class Client implements ClientInterface
     /** @var Psr17Factory */
     private $psr17Factory;
 
+    /** @var string */
+    private $apiKey;
+
+    /** @var string */
+    private $apiSecret;
+
     /** @var HttpClientInterface */
     private $httpClient;
 
@@ -39,15 +45,6 @@ final class Client implements ClientInterface
 
     /** @var ResponseFactoryInterface */
     private $responseFactory;
-
-    /** @var array */
-    private $auth;
-
-    /** @var string */
-    private $apiKey;
-
-    /** @var string */
-    private $apiSecret;
 
     /** @var string */
     private $baseUrl;
