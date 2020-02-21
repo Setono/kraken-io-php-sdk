@@ -23,7 +23,6 @@
         "korbeil/phpstan-generic-rules": "^0.2",
         "kriswallsmith/buzz": "^1.0",
         "nyholm/psr7": "^1.2",
-        "phpspec/phpspec": "^5.1 || ^6.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-strict-rules": "^0.12",
         "phpunit/phpunit": "^8.5",
@@ -53,10 +52,8 @@
         "analyse": "vendor/bin/phpstan analyse -c phpstan.neon -l max src",
         "check-style": "vendor/bin/ecs check --ansi src/ tests/ spec/",
         "fix-style": "vendor/bin/ecs check --fix --ansi src/ tests/ spec/",
-        "phpspec": "vendor/bin/phpspec run",
         "phpunit": "vendor/bin/phpunit",
         "test": [
-            "@phpspec",
             "@phpunit"
         ]
     }
