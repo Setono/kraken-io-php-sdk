@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Setono\Kraken\Client\Response;
 
 use LogicException;
-use Webmozart\Assert\Assert;
 
 class Response
 {
@@ -14,11 +13,10 @@ class Response
 
     public function __construct(array $data)
     {
-        Assert::keyExists($data, 'success');
         $this->data = $data;
 
-        if (!isset($data['success']) || $data['success'] !== true) {
-            throw new LogicException('A response should not be possible to be created with an unsuccessful request');
+        if (isset($data['success']) && $data['success'] !== true) {
+            throw new LogicException('The response was not successful');
         }
     }
 
