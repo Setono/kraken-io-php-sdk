@@ -15,12 +15,30 @@ use Setono\Kraken\Client\Response\WaitResponse;
 
 final class ClientTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function upload_with_url_and_wait(): void
+    /** @var string */
+    private $apiKey = 'api key';
+
+    /** @var string */
+    private $apiSecret = 'api secret';
+
+    /** @var bool */
+    private $live = false;
+
+    /** @var array */
+    private $matchers = [];
+
+    public function setUp(): void
     {
-        $httpClient = $this->getHttpClient(static function (string $uri, array $body) {
+        $apiKey = getenv('KRAKEN_API_KEY');
+        $apiSecret = getenv('KRAKEN_API_SECRET');
+
+        if (false !== $apiKey && false !== $apiSecret) {
+            $this->apiKey = $apiKey;
+            $this->apiSecret = $apiSecret;
+            $this->live = true;
+        }
+
+        $this->addMatcher(static function (string $uri, array $body) {
             return isset($body['wait']) && $body['wait'] === true && preg_match(sprintf('#%s#', 'v1/url'), $uri) === 1;
         }, [
             'success' => true,
@@ -30,9 +48,33 @@ final class ClientTest extends TestCase
             'saved_bytes' => 159162,
             'kraked_url' => 'http://dl.kraken.io/d1/aa/cd/2a2280c2ffc7b4906a09f78f46/header.jpg',
         ]);
-        $client = $this->getClient($httpClient);
 
-        $response = $client->url('http://www.example.com', true);
+        $this->addMatcher(static function (string $uri, array $body) {
+            return preg_match(sprintf('#%s#', 'v1/url'), $uri) === 1 && isset($body['wait']) && $body['wait'] === false;
+        }, [
+            'id' => '456234891891',
+        ]);
+
+        $this->addMatcher(static function (string $uri) {
+            return preg_match(sprintf('#%s#', 'user_status'), $uri) === 1;
+        }, [
+            'success' => true,
+            'active' => true,
+            'plan_name' => 'Enterprise',
+            'quota_total' => 64424509440,
+            'quota_used' => 313271610,
+            'quota_remaining' => 64111237830,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function upload_with_url_and_wait(): void
+    {
+        $client = $this->getClient();
+
+        $response = $client->url('https://via.placeholder.com/300/FFFFFF/808080?text=kraken.io', true);
 
         $this->assertInstanceOf(WaitResponse::class, $response);
     }
@@ -42,12 +84,7 @@ final class ClientTest extends TestCase
      */
     public function upload_with_url_and_get_callback(): void
     {
-        $httpClient = $this->getHttpClient(static function (string $uri, array $body) {
-            return preg_match(sprintf('#%s#', 'v1/url'), $uri) === 1 && isset($body['wait']) && $body['wait'] === false;
-        }, [
-            'id' => '456234891891',
-        ]);
-        $client = $this->getClient($httpClient);
+        $client = $this->getClient();
 
         $response = $client->url('http://www.example.com', true, false, [
             'callback_url' => 'https://example.com/callback',
@@ -61,36 +98,25 @@ final class ClientTest extends TestCase
      */
     public function get_user_status(): void
     {
-        $httpClient = $this->getHttpClient(static function (string $uri, array $body) {
-            return preg_match(sprintf('#%s#', 'user_status'), $uri) === 1;
-        }, [
-            'success' => true,
-            'active' => true,
-            'plan_name' => 'Enterprise',
-            'quota_total' => 64424509440,
-            'quota_used' => 313271610,
-            'quota_remaining' => 64111237830,
-        ]);
-        $client = $this->getClient($httpClient);
-
-        $response = $client->status();
-
+        $response = $this->getClient()->status();
         $this->assertInstanceOf(UserStatusResponse::class, $response);
     }
 
-    private function getClient(HttpClientInterface $httpClient): Client
+    private function getClient(HttpClientInterface $httpClient = null): Client
     {
-        return new Client('api key', 'api secret', $httpClient);
+        $httpClient = null;
+        if (!$this->live) {
+            $httpClient = $this->getHttpClient();
+        }
+
+        return new Client($this->apiKey, $this->apiSecret, $httpClient);
     }
 
-    private function getHttpClient(callable $matcher, array $return): HttpClientInterface
+    private function getHttpClient(): HttpClientInterface
     {
         $httpClient = new class() implements HttpClientInterface {
-            /** @var callable */
-            private $matcher;
-
             /** @var array */
-            private $return;
+            private $matchers;
 
             public function sendRequest(RequestInterface $request): ResponseInterface
             {
@@ -99,28 +125,32 @@ final class ClientTest extends TestCase
                     $body = json_decode((string) $request->getBody(), true);
                 }
 
-                $res = call_user_func($this->matcher, (string) $request->getUri(), $body);
-                if (true === $res) {
-                    return new HttpResponse(200, [], json_encode($this->return));
+                foreach ($this->matchers as $matcher) {
+                    $res = call_user_func($matcher['matcher'], (string) $request->getUri(), $body);
+                    if (true === $res) {
+                        return new HttpResponse(200, [], json_encode($matcher['return']));
+                    }
                 }
 
                 throw new \RuntimeException('Could not match the request');
             }
 
-            public function setMatcher(callable $matcher): void
+            public function setMatchers(array $matchers): void
             {
-                $this->matcher = $matcher;
-            }
-
-            public function setReturn(array $return): void
-            {
-                $this->return = $return;
+                $this->matchers = $matchers;
             }
         };
 
-        $httpClient->setMatcher($matcher);
-        $httpClient->setReturn($return);
+        $httpClient->setMatchers($this->matchers);
 
         return $httpClient;
+    }
+
+    private function addMatcher(callable $matcher, array $return): void
+    {
+        $this->matchers[] = [
+            'matcher' => $matcher,
+            'return' => $return,
+        ];
     }
 }
