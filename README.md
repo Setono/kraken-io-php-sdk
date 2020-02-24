@@ -10,6 +10,7 @@ A PHP SDK for the [Kraken.io API](https://kraken.io/docs/getting-started).
 
 ## Installation
 
+### Download
 Open a command console, enter your project directory and execute the following command to download the latest stable version of this library:
 
 ```bash
@@ -18,8 +19,59 @@ $ composer require setono/kraken-io-php-sdk
 
 This command requires you to have Composer installed globally, as explained in the [installation chapter](https://getcomposer.org/doc/00-intro.md) of the Composer documentation.
 
+### Install HTTP client
+This library is HTTP client agnostic so you need to provide your own PSR18 HTTP client implementation.
+If you don't want to bother with this, you can just do this:
+
+```bash
+$ composer require kriswallsmith/buzz nyholm/psr7
+```
+
+This will install the PSR18 HTTP client, Buzz and HTTP message factories used to create requests, responses, and streams.
+
 ## Usage
-TODO 
+
+### Upload file via URL and wait for a response
+```php
+<?php
+use Setono\Kraken\Client\Client;
+use Setono\Kraken\Client\Response\WaitResponse;
+
+$client = new Client('Your API key', 'Your API secret');
+
+/** @var WaitResponse $response */
+$response = $client->url('https://www.your-domain.com/your/image.jpg', true);
+
+/** @var SplFileInfo $optimizedImageFile */
+$optimizedImageFile = $response->getFile();
+```
+
+### Get user status
+```php
+<?php
+use Setono\Kraken\Client\Client;
+use Setono\Kraken\Client\Response\UserStatusResponse;
+
+$client = new Client('Your API key', 'Your API secret');
+
+/** @var UserStatusResponse $response */
+$response = $client->status();
+
+echo sprintf('Quota total: %s', $response->getQuotaTotal());
+echo sprintf('Quota used: %s', $response->getQuotaUsed());
+echo sprintf('Quota remaining: %s', $response->getQuotaRemaining());
+```
+
+### I want to use my own HTTP client implementation and message factories
+
+You can inject your own implementations when instantiating the client:
+
+```php
+<?php
+use Setono\Kraken\Client\Client;
+
+$client = new Client('Your API key', 'Your API secret', $httpClient, $httpRequestFactory, $httpStreamFactory);
+```
 
 [ico-version]: https://poser.pugx.org/setono/kraken-io-php-sdk/v/stable
 [ico-unstable-version]: https://poser.pugx.org/setono/kraken-io-php-sdk/v/unstable
