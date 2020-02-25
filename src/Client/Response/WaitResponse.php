@@ -23,13 +23,13 @@ final class WaitResponse extends Response
     /** @var string */
     private $fileName;
 
-    /** @var string */
+    /** @var int */
     private $originalSize;
 
-    /** @var string */
+    /** @var int */
     private $krakedSize;
 
-    /** @var string */
+    /** @var int */
     private $savedBytes;
 
     /** @var string */
@@ -63,17 +63,17 @@ final class WaitResponse extends Response
         return $this->fileName;
     }
 
-    public function getOriginalSize(): string
+    public function getOriginalSize(): int
     {
         return $this->originalSize;
     }
 
-    public function getKrakedSize(): string
+    public function getKrakedSize(): int
     {
         return $this->krakedSize;
     }
 
-    public function getSavedBytes(): string
+    public function getSavedBytes(): int
     {
         return $this->savedBytes;
     }
