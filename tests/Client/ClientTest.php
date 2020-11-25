@@ -76,7 +76,7 @@ final class ClientTest extends TestCase
 
         $response = $client->url('https://via.placeholder.com/300/FFFFFF/808080?text=kraken.io', true);
 
-        $this->assertInstanceOf(WaitResponse::class, $response);
+        self::assertInstanceOf(WaitResponse::class, $response);
     }
 
     /**
@@ -90,7 +90,7 @@ final class ClientTest extends TestCase
             'callback_url' => 'https://example.com/callback',
         ]);
 
-        $this->assertInstanceOf(CallbackResponse::class, $response);
+        self::assertInstanceOf(CallbackResponse::class, $response);
     }
 
     /**
@@ -99,12 +99,11 @@ final class ClientTest extends TestCase
     public function get_user_status(): void
     {
         $response = $this->getClient()->status();
-        $this->assertInstanceOf(UserStatusResponse::class, $response);
+        self::assertInstanceOf(UserStatusResponse::class, $response);
     }
 
     private function getClient(HttpClientInterface $httpClient = null): Client
     {
-        $httpClient = null;
         if (!$this->live) {
             $httpClient = $this->getHttpClient();
         }

@@ -19,15 +19,11 @@
         "webmozart/assert": "^1.7"
     },
     "require-dev": {
-        "ergebnis/composer-normalize": "^2.0",
-        "korbeil/phpstan-generic-rules": "^0.2",
+        "ext-json": "*",
         "kriswallsmith/buzz": "^1.0",
         "nyholm/psr7": "^1.2",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-strict-rules": "^0.12",
         "phpunit/phpunit": "^8.5",
-        "sylius-labs/coding-standard": "^3.1",
-        "thecodingmachine/phpstan-safe-rule": "^1.0"
+        "setono/code-quality-pack": "^1.4"
     },
     "config": {
         "sort-packages": true
@@ -49,10 +45,10 @@
     },
     "prefer-stable": true,
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse -c phpstan.neon -l max src",
-        "check-style": "vendor/bin/ecs check --ansi src/ tests/",
-        "fix-style": "vendor/bin/ecs check --fix --ansi src/ tests/",
-        "phpunit": "vendor/bin/phpunit",
+        "analyse": "phpstan analyse -c phpstan.neon",
+        "check-style": "ecs check --ansi src/ tests/",
+        "fix-style": "ecs check --fix --ansi src/ tests/",
+        "phpunit": "phpunit",
         "test": [
             "@phpunit"
         ]

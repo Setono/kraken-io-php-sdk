@@ -1,10 +1,10 @@
-includes:
-	- vendor/korbeil/phpstan-generic-rules/extension.neon
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
-	- vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
-
 parameters:
 	checkMissingIterableValueType: false
 
 	excludes_analyse:
 		- 'tests/**.php'
+
+	level: max
+
+	paths:
+		- src/

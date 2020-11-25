@@ -58,6 +58,14 @@ final class Client implements ClientInterface
         ResponseFactoryInterface $responseFactory = null,
         string $baseUrl = 'https://api.kraken.io'
     ) {
+        if ('' === $apiKey) {
+            throw new RuntimeException('The API key cannot be empty');
+        }
+
+        if ('' === $apiSecret) {
+            throw new RuntimeException('The API secret cannot be empty');
+        }
+
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
 
