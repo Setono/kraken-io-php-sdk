@@ -4,7 +4,6 @@
 [![Latest Unstable Version][ico-unstable-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
 [![Build Status][ico-github-actions]][link-github-actions]
-[![Quality Score][ico-code-quality]][link-code-quality]
 
 A PHP SDK for the [Kraken.io API](https://kraken.io/docs/getting-started).
 
@@ -77,8 +76,6 @@ $client = new Client('Your API key', 'Your API secret', $httpClient, $httpReques
 [ico-unstable-version]: https://poser.pugx.org/setono/kraken-io-php-sdk/v/unstable
 [ico-license]: https://poser.pugx.org/setono/kraken-io-php-sdk/license
 [ico-github-actions]: https://github.com/Setono/kraken-io-php-sdk/workflows/build/badge.svg
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/Setono/kraken-io-php-sdk.svg
 
 [link-packagist]: https://packagist.org/packages/setono/kraken-io-php-sdk
 [link-github-actions]: https://github.com/Setono/kraken-io-php-sdk/actions
-[link-code-quality]: https://scrutinizer-ci.com/g/Setono/kraken-io-php-sdk
