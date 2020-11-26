@@ -32,6 +32,10 @@ final class RequestFailedException extends RuntimeException
             $message = $data['message'];
         }
 
+        if (is_array($message)) {
+            $message = implode('', $message);
+        }
+
         parent::__construct(sprintf(
             'Request failed with message: %s. HTTP status code was: %s', $message, $response->getStatusCode()
         ));
