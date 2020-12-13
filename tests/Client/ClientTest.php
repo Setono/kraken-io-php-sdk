@@ -27,7 +27,7 @@ final class ClientTest extends TestCase
     /** @var array */
     private $matchers = [];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $apiKey = getenv('KRAKEN_API_KEY');
         $apiSecret = getenv('KRAKEN_API_SECRET');
